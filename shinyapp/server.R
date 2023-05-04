@@ -4874,11 +4874,12 @@ server <- function(input, output, session) {
   output$foodBanksLeaflet <- renderLeaflet({
     foodBankLoc <- read.csv("./data/foodBank/FoodBanks.csv")
     countyOutlines <- read_sf(dsn = "./data/countyOutlines/countyOutlines.shp")
-    labs <- paste0(foodBankLoc$name, "<br></br><a href='", foodBankLoc$url,"'>Link</a>")
+    labs <- paste0(foodBankLoc$name, "<br></br><a href='", foodBankLoc$url,"'>View</a>")
+    pal <- colorFactor(palette = 'viridis', foodBankLoc$county)
     foodBank.map <- foodBankLoc %>%
       leaflet(options = leafletOptions(minZoom = 5, maxZoom = 17, drag=FALSE)) %>%
       addProviderTiles("CartoDB.PositronNoLabels") %>%
-      addMarkers(~lng, ~lat, popup=lapply(labs, htmltools::HTML)) %>%
+      addCircleMarkers(~lng, ~lat, popup=lapply(labs, htmltools::HTML), radius = 5, fillOpacity = 1.0, weight = 1,  color = ~pal(foodBankLoc$county)) %>%
       addPolylines(data = countyOutlines, color = "black", weight = 1.2, smoothFactor = .5,
                    fillOpacity = 0, fillColor = "transparent")
     
@@ -4906,6 +4907,75 @@ server <- function(input, output, session) {
       
     
     ggplotly(foodBank.ggplot)
+  })
+  
+  
+  # Low Access to Food -----------------------------------------------------
+  var_LowAcc <- reactive({
+    input$LowAccIn
+  })
+
+  output$povertyRateMap <- renderLeaflet({
+    lowAccDF <- read_sf("./data/foodAtlas/masterData.shp") %>% filter(year == 2019)
+    countyOutlines <- read_sf(dsn = "./data/countyOutlines/countyOutlines.shp")
+    
+    pvrtyRate <- round(lowAccDF$PvrtyRt, 2)
+    county <- word(lowAccDF$County, 1, -2)
+    pal1 <- colorNumeric(palette = "magma", 
+                         domain = as.double(pvrtyRate), reverse = TRUE)
+
+    foodAccessMap <- leaflet(lowAccDF, options = leafletOptions(minZoom = 5, maxZoom = 15, drag = FALSE)) %>%
+      addProviderTiles("CartoDB.Positron") %>%
+    addPolygons(color = ~pal1(as.double(pvrtyRate)), weight = 0.5, fillOpacity = 0.7, smoothFactor = 0,
+                highlightOptions = highlightOptions(bringToFront = TRUE, sendToBack = TRUE, opacity = 1.5, weight = 3),
+                label = paste0(county, ": ", pvrtyRate, "%")) %>%
+    addPolylines(data = countyOutlines, color = "black", weight = 1.2, smoothFactor = .5,
+                 fillOpacity = 0, fillColor = "transparent") %>%
+    addLegend(position = "topright", pal = pal1, values = as.double(pvrtyRate), opacity = .9, title = "Poverty Rate (%)")
+    
+    foodAccessMap
+  })
+  
+  output$lowAccessAF1 <- renderLeaflet({
+    lowAccDF <- read_sf("./data/foodAtlas/masterData.shp") %>% filter(year == 2019)
+    countyOutlines <- read_sf(dsn = "./data/countyOutlines/countyOutlines.shp")
+    
+    lowAccessAF1Mile <- round(as.numeric(lowAccDF$lblck1s), 2)
+    county <- word(lowAccDF$County, 1, -2)
+    pal1 <- colorNumeric(palette = "magma", 
+                         domain = as.double(lowAccessAF1Mile), reverse = TRUE)
+    
+    foodAccessMap <- leaflet(lowAccDF, options = leafletOptions(minZoom = 5, maxZoom = 15, drag = FALSE)) %>%
+      addProviderTiles("CartoDB.Positron") %>%
+      addPolygons(color = ~pal1(as.double(lowAccessAF1Mile)), weight = 0.5, fillOpacity = 0.7, smoothFactor = 0,
+                  highlightOptions = highlightOptions(bringToFront = TRUE, sendToBack = TRUE, opacity = 1.5, weight = 3),
+                  label = paste0(county, ": ", lowAccessAF1Mile, "%")) %>%
+      addPolylines(data = countyOutlines, color = "black", weight = 1.2, smoothFactor = .5,
+                   fillOpacity = 0, fillColor = "transparent") %>%
+      addLegend(position = "topright", pal = pal1, values = as.double(lowAccessAF1Mile), opacity = .9, title = "Low Market Access (%)")
+    
+    foodAccessMap
+  })
+  
+  output$lowAccessAF <- renderLeaflet({
+    lowAccDF <- read_sf("./data/foodAtlas/masterData.shp") %>% filter(year == 2019)
+    countyOutlines <- read_sf(dsn = "./data/countyOutlines/countyOutlines.shp")
+    
+    lowAccessAFHalfMile <- round(as.numeric(lowAccDF$lblckhlfs), 2)
+    county <- word(lowAccDF$County, 1, -2)
+    pal1 <- colorNumeric(palette = "magma", 
+                         domain = as.double(lowAccessAFHalfMile), reverse = TRUE)
+    
+    foodAccessMap <- leaflet(lowAccDF, options = leafletOptions(minZoom = 5, maxZoom = 15, drag = FALSE)) %>%
+      addProviderTiles("CartoDB.Positron") %>%
+      addPolygons(color = ~pal1(as.double(lowAccessAFHalfMile)), weight = 0.5, fillOpacity = 0.7, smoothFactor = 0,
+                  highlightOptions = highlightOptions(bringToFront = TRUE, sendToBack = TRUE, opacity = 1.5, weight = 3),
+                  label = paste0(county, ": ", lowAccessAFHalfMile, "%")) %>%
+      addPolylines(data = countyOutlines, color = "black", weight = 1.2, smoothFactor = .5,
+                   fillOpacity = 0, fillColor = "transparent") %>%
+      addLegend(position = "topright", pal = pal1, values = as.double(lowAccessAFHalfMile), opacity = .9, title = "Low Market Access (%)")
+    
+    foodAccessMap
   })
   
   # Financial Literacy

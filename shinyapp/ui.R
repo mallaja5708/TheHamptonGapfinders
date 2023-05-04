@@ -469,6 +469,12 @@ ui <- navbarPage(
             strong("Zillow"),
             "Zillow is one of the leading real-estate websites in the United States offering information for selling, buying, and renting homes all across the United States. This website provides the information for the median home value of any given zip code in the Hampton Roads area."
           ),
+          br(),
+          img(src = 'googleMapLogo.png', style = "display: inline; float: left;", width = "150px"),
+          p(
+            strong("Google Maps API"),
+            "Using a Google Maps Platform developer account, accessing real-time information about places and locations in the globe is incredibly easy. Returned in an easy to format, easy to plot way, the Google Maps API was used to locate food banks and pantries within the Hampton Roads area."
+          ),
         ) ,
         
         
@@ -555,7 +561,8 @@ ui <- navbarPage(
             strong("People & Values:"),
             "We investigated financial literacy survey results to describe the financial literacy of the Black population as a whole. The survey provides results from a wide variety of countries,
             here we only focused on the responses from Virginia residents. Unfortunately this information is not available on a more granular level yet, so we aim to draw insights from the most representative
-            population available in the data."
+            population available in the data. Another facet of People & Values that is touched on is the availability of food, and the area's food security. Food security allows for a healthier quality of life in all communities. 
+            By analyzing what areas are more food insecure than others, along with providing the information and resources to make a change, a community can grow and thrive."
           ),
           
         )
@@ -1881,15 +1888,49 @@ ui <- navbarPage(
                                    p(
                                      tags$small(
                                        "Data Source: Google Maps API places"
-                                     )))
+                                       )))
                         )
                         )))
              ),
-    tabPanel("Food Insecure Indicators", fluidRow("something goes here"))
-    ),
-  
-        
-  
+    
+    
+    tabPanel("Food Insecurity: Distance from nearest market", 
+             fluidRow(
+               p("", style = "padding-top:20px;"),
+               column(
+                 4,
+                 h4(strong("Food Insecurity")),
+                 p("Around every five years the U.S. Department of Agriculture releases their Food Access Research Atlas, a comprehensive dataset providing information about food access throughout the nation. Variables including poverty rates, food deserts, and demographic access to sources of food are all provided."),
+                 p("We first collected the dataset and cleaned it for better operability within this dashboard by filtering for only Hampton localities. The data is broken into county tracts for a more fine-tuned look."),
+                 p("This page is intended to show the poverty rate of each tract in a given locality, along with visualize the African American population's access to supermarkets at two different distances, one and one half mile."),
+                 p("Viewing the first map, visualizing poverty rates, we can see a trend that the more densly populated areas, inner city Norfolk, or Hampton, have higher rates of poverty. We can see that it in some tracts reach rates of up to 80.0%."),
+                 p("The two subsequent plots visualize the African American communities' access to supermarkets at two different distances. Half mile distances are a lot more prevalent on the outskirts of the Hamton region. Places like Southampton and York Counties have lower access especially seen in the African American Communities"),
+                 p("One unfortunate note is the number of N/A's in the one mile distance in Virginia Beach and Norfolk counties."),
+                 p("Despite our findings, it is important to note that this does not visualize the accessibility of supermarkets for other demographics. Taking a more holistic view of this data dashboard would be including all demographics and comparing them from there.")
+               ),
+               column(8,
+                       fluidPage(
+                         h1(strong("Food Insecurity"), align = "center"),
+                            tabsetPanel(
+                              tabPanel("Poverty Rates",
+                                       withSpinner(leafletOutput("povertyRateMap")),
+                                       p(
+                                         tags$small("Data Source: US Dept. of Agriculture"
+                                                    ))),
+                              tabPanel("African Population Low Access Markets (Half Mile)",
+                                       withSpinner(leafletOutput("lowAccessAF")),
+                                       p(
+                                         tags$small("Data Source: US Dept. of Agriculture"
+                                         ))),
+                              tabPanel("African Population Low Access Markets (One Mile)",
+                                       withSpinner(leafletOutput("lowAccessAF1")),
+                                       p(
+                                         tags$small("Data Source: US Dept. of Agriculture"
+                                         )))
+                              )
+                              )))
+               )),
+                                                                    
   tabPanel("Future Work",
            fluidRow(
              p("", style = "padding-top:20px;"),
@@ -2437,14 +2478,14 @@ ui <- navbarPage(
           tags$br(),
           tags$br(),
           img(
-            src = "sania.jpg",
+            src = "hyesoo.jpg",
             style = "display: inline; margin-right: 5px; border: 1px solid #C0C0C0;",
             width = "85%",
             height = "85%"
           ),
           tags$br(),
           p(
-            a(href = 'http://www.linkedin.com/in/saniamahmood-2022/', 'Sania Mahmood', target = '_blank'),
+            a(href = 'https://www.linkedin.com/in/hyesoo-kwon-658b7987/', 'Hyesoo Kwon', target = '_blank'),
             "(Virginia Tech, CMDA)"
           )
         ),
@@ -2455,14 +2496,14 @@ ui <- navbarPage(
           tags$br(),
           tags$br(),
           img(
-            src = "abigail.jpg",
+            src = "shashank.jpg",
             style = "display: inline; margin-right: 5px; border: 1px solid #C0C0C0;",
             width = "85%",
             height = "85%"
           ),
           tags$br(),
           p(
-            a(href = 'https://www.linkedin.com/in/abigail-simpkins-170b1b14a/', 'Abigail Simpkins', target = '_blank'),
+            a(href = 'https://www.linkedin.com/in/shashank-gp-/', 'Shashank Gupta', target = '_blank'),
             "(Virginia Tech, CMDA)"
           )
         ))),
@@ -2485,7 +2526,9 @@ ui <- navbarPage(
                    policy and justice, & people and values. Emily investigated internet covergae & quality under media and entertainment, Zhenming covered gentrification under policy and justice, 
                    and Allison analyzed financial literacy under people and values.  All of the remaining accrediation for work completed remains with the VT DSPG team and program. The Fall 2022
                    Capstone team expanded the Media/Entertainment pillar with analysis of qualitative data. The Fall 22 team's contributions include text analysis of local newspaper articles and 
-                   media through Natural Language Processing to understand the sentiment of Black communities in Hampton Roads media.")
+                   media through Natural Language Processing to understand the sentiment of Black communities in Hampton Roads media. In the Spring 2023 semester, CMDA's Capstone group expanded upon
+                   the people/values pillar by researching food insecurity and food assistance within the Hampton Area. Contributions include detailed maps about poverty rates, food deserts,
+                   and food bank locations.")
                ))
     )
   ),
