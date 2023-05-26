@@ -4896,8 +4896,8 @@ server <- function(input, output, session) {
     gg.table$`Food Banks` <- as.numeric(gg.table$`Food Banks`)
     gg.table <- gg.table %>% arrange(Locality)
     
-    foodBank.ggplot <- ggplot(gg.table, aes(x = Locality, y = `Food Banks`, fill = Locality)) + 
-      geom_col() + theme(legend.position="none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+    foodBank.ggplot <- ggplot(gg.table, aes(x = Locality, y = `Food Banks`)) + ggtitle("# of Food Banks in Locality", ) + 
+      geom_col() + theme(legend.position="none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1, size = 15)) + 
       geom_text(
         aes(label = `Food Banks`), 
         position = position_dodge(width = 1),
